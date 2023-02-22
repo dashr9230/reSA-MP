@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33403.182
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "remoteac", "remoteac.vcxproj", "{09055B2B-18D4-468C-8ACA-EFA6B0719082}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{09055B2B-18D4-468C-8ACA-EFA6B0719082}.Debug|x86.ActiveCfg = Debug|Win32
+		{09055B2B-18D4-468C-8ACA-EFA6B0719082}.Debug|x86.Build.0 = Debug|Win32
+		{09055B2B-18D4-468C-8ACA-EFA6B0719082}.Release|x86.ActiveCfg = Release|Win32
+		{09055B2B-18D4-468C-8ACA-EFA6B0719082}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {48BAA1C6-9B2D-4419-B85B-812F5448DD92}
+	EndGlobalSection
+EndGlobal

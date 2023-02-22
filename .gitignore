@@ -1,0 +1,15 @@
+### Visual Studio files
+.vs
+
+### Compiler generated files
+*/Debug/*
+*/Release/*
+
+## Exceptions
+!announce.exe
+!arctool2.exe
+!rcon.exe
+!LOADSCV.txd
+!samp.dll
+!samp-server.exe
+!samp-bot.exe
