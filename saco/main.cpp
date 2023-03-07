@@ -527,7 +527,7 @@ void d3d9DestroyDeviceObjects()
 	//if (pPlayerTags)
 	//	pPlayerTags->DeleteDeviceObjects();
 
-	pDialogResourceManager->OnDestroyDevice();
+	//pDialogResourceManager->OnDestroyDevice();
 
 	if (pNewPlayerTags)
 		pNewPlayerTags->DeleteDeviceObjects();
@@ -582,8 +582,8 @@ void d3d9RestoreDeviceObjects()
 
 	if(pChatWindow && pChatWindow->m_pChatTextSprite) pChatWindow->m_pChatTextSprite->OnResetDevice();
 
-	pDialogResourceManager->OnCreateDevice(pD3DDevice);
-	pDialogResourceManager->OnResetDevice();
+	//pDialogResourceManager->OnCreateDevice(pD3DDevice);
+	//pDialogResourceManager->OnResetDevice();
 	//SetupGameUI();
 }
 
