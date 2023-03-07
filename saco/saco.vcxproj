@@ -78,6 +78,7 @@
       <StructMemberAlignment>1Byte</StructMemberAlignment>
       <DisableSpecificWarnings>4703;4700;4101;4838;4996;4477;4267;4244</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>d3d9\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
