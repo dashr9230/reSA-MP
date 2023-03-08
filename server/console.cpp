@@ -252,18 +252,30 @@ void con_players() {
 void con_gravity()
 {
 	char* arg = strtok(NULL, " ");
+	char szGravity[128];
 	if (arg)
 	{
-		pNetGame->SetGravity((float)atof(arg));
+		if(pNetGame) {
+			pNetGame->SetGravity((float)atof(arg));
+		} else {
+			sprintf(szGravity, "%f", (float)atof(arg));
+			pConsole->SetStringVariable("gravity", szGravity);
+		}
 	}
 }
 
 void con_weather()
 {
 	char* arg = strtok(NULL, " ");
+	char szWeather[128];
 	if (arg)
 	{
-		pNetGame->SetWeather(atoi(arg));
+		if (pNetGame) {
+			pNetGame->SetWeather(atoi(arg));
+		} else {
+			sprintf(szWeather, "%d", atoi(arg));
+			pConsole->SetStringVariable("weather", szWeather);
+		}
 	}
 }
 
