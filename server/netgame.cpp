@@ -404,6 +404,11 @@ void CNetGame::Init(BOOL bFirst = false)
 
 void CNetGame::ShutdownForGameModeRestart()
 {
+	// There is a 12 second time gap until the pools gets
+	// reinitialized, and repeatedly using 'gmx' in that time
+	// period could cause access violation crash.
+	if(GetGameState() == GAMESTATE_RESTARTING) return;
+
 	// Let the clients know the world is going down
 	RakNet::BitStream bsParams;
 	GetRakServer()->RPC(RPC_GameModeRestart, &bsParams, HIGH_PRIORITY,
