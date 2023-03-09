@@ -702,9 +702,12 @@ void CConsole::Execute(char* pExecLine)
 	if (!pExecLine) return;
 
 	// Ya can't strtok on a read-only string!
-	char cpy[255];
+	char cpy[256];
+	memset(cpy, 0, sizeof(cpy));
 	strncpy(cpy, pExecLine, 255);
-	char* cmd = strlwr(strtok(cpy, " "));
+	char *tmp = strtok(cpy, " ");
+	if(!tmp) return;
+	char* cmd = strlwr(tmp);
 
 	for (int i=0; i<ARRAY_SIZE(ConsoleCommands); i++)
 	{
