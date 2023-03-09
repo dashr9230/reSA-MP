@@ -39,17 +39,19 @@ void con_exec()
 	char* arg = strtok(NULL, " ");
 	if (arg)
 	{
-		char tmp[256];
-		char tmpvarname[128];
+		char tmp[1025];
+		char tmpvarname[1025];
 		sprintf(tmp, "%s.cfg", arg);
 		FILE* f = fopen(tmp, "r");
 		if (!f)
 		{
 			logprintf("Unable to exec file '%s'.", tmp);
 		} else {
+			memset(tmp, 0, sizeof(tmp));
 			while (fgets(tmp, 1024, f))
 			{
 				int len = strlen(tmp);
+				if (len > 1024) continue;
 				if (len > 0 && tmp[len-1] == '\n')
 					tmp[strlen(tmp)-1] = 0;
 				len = strlen(tmp);
@@ -69,6 +71,8 @@ void con_exec()
 				if (strlen(tmp) > 2)
 				{
 					if ((tmp[0] != '/') && (tmp[1] != '/'))
+					{
+						memset(tmpvarname, 0, sizeof(tmpvarname));
 						for(int i = 0; tmp[i] != '\0'; i++)
 						{
 							if (tmp[i] == ' ')
@@ -83,7 +87,9 @@ void con_exec()
 						{
 							pConsole->Execute(tmp);
 						}
+					}
 				}
+				memset(tmp, 0, sizeof(tmp));
 			}
 			fclose(f);
 		}
