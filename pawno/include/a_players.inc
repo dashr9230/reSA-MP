@@ -20,6 +20,8 @@
 #define SPECIAL_ACTION_USECELLPHONE		11
 #define SPECIAL_ACTION_SITTING			12
 #define SPECIAL_ACTION_STOPUSECELLPHONE 	13
+#define SPECIAL_ACTION_URINATE			68
+#define SPECIAL_ACTION_PISSING			68
 
 // Player
 native SetSpawnInfo(playerid, team, skin, Float:x, Float:y, Float:z, Float:rotation, weapon1, weapon1_ammo, weapon2, weapon2_ammo, weapon3, weapon3_ammo);
@@ -37,7 +39,7 @@ native SetPlayerHealth(playerid, Float:health);
 native GetPlayerHealth(playerid, &Float:health);
 native SetPlayerArmour(playerid, Float:armour);
 native GetPlayerArmour(playerid, &Float:armour);
-native SetPlayerAmmo(playerid, weaponslot, ammo);
+native SetPlayerAmmo(playerid, weaponid, ammo);
 native GetPlayerAmmo(playerid);
 native SetPlayerTeam(playerid, teamid);
 native GetPlayerTeam(playerid);
@@ -64,7 +66,7 @@ native SetPlayerTime(playerid, hour, minute);
 native GetPlayerTime(playerid, &hour, &minute);
 native TogglePlayerClock(playerid, toggle);
 native SetPlayerWeather(playerid, weather);
-native SetPlayerDisabledWeapons(playerid, ...);
+//native SetPlayerDisabledWeapons(playerid, ...); // not implemented
 native ForceClassSelection(playerid);
 native SetPlayerWantedLevel(playerid, level);
 native GetPlayerWantedLevel(playerid);

@@ -72,6 +72,7 @@ native EnableTirePopping(enable);
 native AllowInteriorWeapons(allow);
 native SetWeather(weatherid);
 native SetGravity(Float:gravity);
+native GetGravity();
 native AllowAdminTeleport(allow);
 native SetDeathDropAmount(amount);
 native CreateExplosion(Float:X, Float:Y, Float:Z, type, Float:Radius);
@@ -159,7 +160,7 @@ native GangZoneStopFlashForAll(zone);
 #define INVALID_PLAYER_ID						(255)
 #define INVALID_VEHICLE_ID						(0xFFFF)
 #define NO_TEAM									(255)
-#define MAX_OBJECTS								(150)
+#define MAX_OBJECTS								(255)
 #define INVALID_OBJECT_ID						(255)
 #define MAX_GANG_ZONES							(1024)
 #define MAX_TEXT_DRAWS							(1024)
@@ -169,9 +170,11 @@ native GangZoneStopFlashForAll(zone);
 #define INVALID_GANG_ZONE						(-1)
 
 // Weapons
+#define WEAPON_FIST						(0)
 #define WEAPON_BRASSKNUCKLE				(1)
 #define WEAPON_GOLFCLUB					(2)
 #define WEAPON_NITESTICK				(3)
+#define WEAPON_NIGHTSTICK				(3)
 #define WEAPON_KNIFE					(4)
 #define WEAPON_BAT						(5)
 #define WEAPON_SHOVEL					(6)
@@ -187,6 +190,7 @@ native GangZoneStopFlashForAll(zone);
 #define WEAPON_GRENADE					(16)
 #define WEAPON_TEARGAS					(17)
 #define WEAPON_MOLTOV					(18)
+#define WEAPON_MOLOTOV					(18)
 #define WEAPON_COLT45					(22)
 #define WEAPON_SILENCED					(23)
 #define WEAPON_DEAGLE					(24)
