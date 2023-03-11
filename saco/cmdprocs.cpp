@@ -30,10 +30,10 @@ int iCurrentPlayerTest=1;
 
 extern float fFarClip;
 
-extern unsigned long _recvfromUncompressedTotal;
-extern unsigned long _recvfromCompressedTotal;
-extern unsigned long _sendtoUncompressedTotal;
-extern unsigned long _sendtoCompressedTotal;
+//extern unsigned long _recvfromUncompressedTotal;
+//extern unsigned long _recvfromCompressedTotal;
+//extern unsigned long _sendtoUncompressedTotal;
+//extern unsigned long _sendtoCompressedTotal;
 extern float fOnFootCorrectionMultiplier;
 extern float fInCarCorrectionMultiplier;
 extern float fInaccuracyFactorMultiplier;
@@ -208,12 +208,12 @@ void cmdRcon(PCHAR szCmd)
 
 void cmdCmpStat(PCHAR szCmd)
 {
-	float upRatio = (float)_sendtoCompressedTotal / _sendtoUncompressedTotal;
+	/*float upRatio = (float)_sendtoCompressedTotal / _sendtoUncompressedTotal;
 	float downRatio = (float)_recvfromCompressedTotal / _recvfromUncompressedTotal;
 
 	if(pChatWindow) {
 		pChatWindow->AddDebugMessage("u: %.2f d: %.2f",upRatio*100.0f,downRatio*100.0f);
-	}	
+	}*/
 }
 
 //----------------------------------------------------

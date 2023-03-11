@@ -22,17 +22,8 @@
  * modification, and warranty rights.
 */
 #include "SocketLayer.h"
-#include "PacketEnumerations.h"
-
-#ifdef SAMPSRV
-#include "../server/main.h"
-#endif
-
 #include <assert.h>
 #include "MTUSize.h"
-
-#include "zlib/zlib.h"
-#define COMPRESS_DECOMPRESS_BUFFERSIZE  50000
 
 #ifdef _WIN32
 #include <process.h>
@@ -321,13 +312,8 @@ const char* SocketLayer::DomainNameToIP( const char *domainName )
 }
 #endif
 
-unsigned long _sendtoUncompressedTotal=0;
-unsigned long _sendtoCompressedTotal=0;
-
 void SocketLayer::Write( const SOCKET writeSocket, const char* data, const int length )
 {
-	unsigned char pCompressBuffer[COMPRESS_DECOMPRESS_BUFFERSIZE]={0};
-
 #ifdef _DEBUG
 	assert( writeSocket != INVALID_SOCKET );
 #endif
@@ -342,21 +328,7 @@ void SocketLayer::Write( const SOCKET writeSocket, const char* data, const int l
 	WriteAsynch( ( HANDLE ) writeSocket, eos );
 #else
 
-//----------------------------------------------
-// Kye Added: Zlib in socketlayer headend (client compresses)
-
-  #ifndef SAMPSRV
-	uLongf destLen = COMPRESS_DECOMPRESS_BUFFERSIZE;
-	if(compress2(pCompressBuffer,&destLen,(Bytef *)data,length,1) != Z_OK) {
-		return;
-	}
-	_sendtoUncompressedTotal+=length;
-	_sendtoCompressedTotal+=destLen;
-	send( writeSocket, (char*)pCompressBuffer, destLen, 0 );
-  #else
 	send( writeSocket, data, length, 0 );
-  #endif
-
 #endif
 }
 
@@ -398,22 +370,11 @@ bool SocketLayer::AssociateSocketWithCompletionPortAndRead( SOCKET readSocket, u
 	return true;
 }
 
-#ifdef SAMPSRV
-	int ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, char *data, int length, SOCKET s);
-#endif
-    
-unsigned long _recvfromUncompressedTotal=0;
-unsigned long _recvfromCompressedTotal=0;
-unsigned int lastBinaryAddr=0;
-DWORD		 dwLastConnectionTick=0;
-DWORD		 dwLastConnectAddr=0;
-
 int SocketLayer::RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode )
 {
 	int len;
 	char data[ MAXIMUM_MTU_SIZE ];
 	sockaddr_in sa;
-	unsigned char pDecompressBuffer[COMPRESS_DECOMPRESS_BUFFERSIZE] = {0};
 
 	const socklen_t len2 = sizeof( struct sockaddr_in );
 	sa.sin_family = AF_INET;
@@ -435,7 +396,6 @@ int SocketLayer::RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode )
 	// if (len>0)
 	//  printf("Got packet on port %i\n",ntohs(sa.sin_port));
 
-	/*
 	if ( len == 0 )
 	{
 #ifdef _DEBUG
@@ -443,10 +403,9 @@ int SocketLayer::RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode )
 		assert( 0 );
 #endif
 
-		//*errorCode = SOCKET_ERROR;
-		*errorCode = 0;
+		*errorCode = SOCKET_ERROR;
 		return SOCKET_ERROR;
-	}*/
+	}
 
 	if ( len != SOCKET_ERROR )
 	{
@@ -455,48 +414,8 @@ int SocketLayer::RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode )
 		//strcpy(ip, inet_ntoa(sa.sin_addr));
 		//if (strcmp(ip, "0.0.0.0")==0)
 		// strcpy(ip, "127.0.0.1");
+		ProcessNetworkPacket( sa.sin_addr.s_addr, portnum, data, len, rakPeer );
 
-		if (len > 0)
-		{
-
-#ifdef SAMPSRV
-			// QUERY PACKETS ARE NOT COMPRESSED
-			//logprintf("Raw ID: %c:%u",data[0],data[0]);
-
-			if(ProcessQueryPacket(sa.sin_addr.s_addr, portnum,(char*)data, len, s)) {
-				*errorCode = 0;
-				return 1;
-			}
-#endif
-
-		//----------------------------------------------
-		// Kye Added: Zlib in socketlayer headend.
-#ifdef SAMPSRV
-			uLongf destLen = COMPRESS_DECOMPRESS_BUFFERSIZE;
-		
-			PlayerID thisPlayerId;
-			thisPlayerId.binaryAddress = sa.sin_addr.s_addr;
-			thisPlayerId.port = portnum;
-
-			if(uncompress(pDecompressBuffer,&destLen,(Bytef *)data,len) != Z_OK) {
-				*errorCode = 0;
-				return 1;
-			}
-
-			_recvfromCompressedTotal+=len;
-			_recvfromUncompressedTotal+=destLen;
-
-			// Code patch for sampfp DoS
-			if(pDecompressBuffer[0] == ID_OPEN_CONNECTION_REQUEST) {
-				
-			}
-			//logprintf("Decompressed ID: %u",pDecompressBuffer[0]);
-		
-			ProcessNetworkPacket( sa.sin_addr.s_addr, portnum, (char*)pDecompressBuffer, destLen, rakPeer );
-#else
-			ProcessNetworkPacket( sa.sin_addr.s_addr, portnum, data, len, rakPeer );  
-#endif
-		}
 		return 1;
 	}
 	else
@@ -549,11 +468,8 @@ int SocketLayer::RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode )
 #ifdef _MSC_VER
 #pragma warning( disable : 4702 ) // warning C4702: unreachable code
 #endif
-
 int SocketLayer::SendTo( SOCKET s, const char *data, int length, unsigned int binaryAddress, unsigned short port )
 {
-	unsigned char pCompressBuffer[COMPRESS_DECOMPRESS_BUFFERSIZE] = {0};
-
 	if ( s == INVALID_SOCKET )
 	{
 		return -1;
@@ -565,32 +481,12 @@ int SocketLayer::SendTo( SOCKET s, const char *data, int length, unsigned int bi
 	sa.sin_addr.s_addr = binaryAddress;
 	sa.sin_family = AF_INET;
 
-//----------------------------------------------
-// Kye Added: Zlib in socketlayer headend. (client sends compressed)
-
-#ifndef SAMPSRV
-
-	uLongf destLen = COMPRESS_DECOMPRESS_BUFFERSIZE;
-	if(compress2(pCompressBuffer,&destLen,(Bytef *)data,length,1) != Z_OK) {
-		return 1;
-	}
-
-	_sendtoUncompressedTotal+=length;
-	_sendtoCompressedTotal+=destLen;
-
-#endif
-
 	do
 	{
-#ifndef SAMPSRV
-		len = sendto( s, (char *)pCompressBuffer, destLen, 0, ( const sockaddr* ) & sa, sizeof( struct sockaddr_in ) );
-#else
+		// TODO - use WSASendTo which is faster.
 		len = sendto( s, data, length, 0, ( const sockaddr* ) & sa, sizeof( struct sockaddr_in ) );
-#endif
 	}
 	while ( len == 0 );
-
-//----------------------------------------------
 
 	if ( len != SOCKET_ERROR )
 		return 0;
