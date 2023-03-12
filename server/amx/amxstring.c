@@ -33,6 +33,9 @@
   #include <windows.h>
 #endif
 
+#if !defined sizearray
+# define sizearray(a)   (sizeof(a) / sizeof((a)[0]))
+#endif
 
 #define CHARBITS        (8*sizeof(char))
 
@@ -577,24 +580,24 @@ static cell AMX_NATIVE_CALL n_strval(AMX *amx,cell *params)
 /* valstr(dest[], value, bool:pack=false) */
 static cell AMX_NATIVE_CALL n_valstr(AMX *amx,cell *params)
 {
-  char str[50];
-  cell value,mult;
+  TCHAR str[50];
+  ucell value,temp;
   cell *cstr;
   int len,result,negate=0;
 
+  (void)(amx);
   /* find out how many digits are needed */
-  mult=10;
   len=1;
-  value=params[2];
-  if (value<0) {
+  value=(ucell)params[2];
+  if (params[2]<0) {
     negate=1;
     len++;
     value=-value;
   } /* if */
-  while (value>=mult) {
+  //temp=(negate && value<0) ? (ucell)-value : (ucell)value;
+  for (temp=value; temp>=10; temp/=10)
     len++;
-    mult*=10;
-  } /* while */
+  assert(len<=sizearray(str));
 
   /* put in the string */
   result=len;
@@ -606,7 +609,7 @@ static cell AMX_NATIVE_CALL n_valstr(AMX *amx,cell *params)
   if (negate)
     str[0]='-';
   amx_GetAddr(amx,params[1],&cstr);
-  amx_SetString(cstr,str,params[3],0,UNLIMITED);
+  amx_SetString(cstr,str,params[3],sizeof(TCHAR)>1,sizearray(str));
   return result;
 }
 
