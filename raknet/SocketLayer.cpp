@@ -370,6 +370,10 @@ bool SocketLayer::AssociateSocketWithCompletionPortAndRead( SOCKET readSocket, u
 	return true;
 }
 
+#ifdef SAMPSRV
+	int ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, char *data, int length, SOCKET s);
+#endif
+
 int SocketLayer::RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode )
 {
 	int len;
@@ -414,6 +418,17 @@ int SocketLayer::RecvFrom( const SOCKET s, RakPeer *rakPeer, int *errorCode )
 		//strcpy(ip, inet_ntoa(sa.sin_addr));
 		//if (strcmp(ip, "0.0.0.0")==0)
 		// strcpy(ip, "127.0.0.1");
+
+#ifdef SAMPSRV
+		// QUERY PACKETS ARE NOT COMPRESSED
+		//logprintf("Raw ID: %c:%u",data[0],data[0]);
+
+		if(ProcessQueryPacket(sa.sin_addr.s_addr, portnum,(char*)data, len, s)) {
+			*errorCode = 0;
+			return 1;
+		}
+#endif
+
 		ProcessNetworkPacket( sa.sin_addr.s_addr, portnum, data, len, rakPeer );
 
 		return 1;
