@@ -216,9 +216,12 @@ void CNetGame::LoadAllFilterscripts()
 	logprintf("Filter Scripts");
 	logprintf("---------------");
 	int iScriptCount = 0;
-	char* szFilterScript = strtok(pConsole->GetStringVariable("filterscripts"), " ");
-	while (szFilterScript)
+	char* szFilterScript;
+	std::istringstream filterscripts(pConsole->GetStringVariable("filterscripts"));
+	std::string filterscript;
+	while (std::getline(filterscripts, filterscript, ' '))
 	{
+		szFilterScript = (char*)filterscript.c_str();
 		//char szFilterScriptFile[255];
 		//sprintf(szFilterScriptFile, "filterscripts/%s.amx", szFilterScript);
 		logprintf("  Loading filter script '%s.amx'...", szFilterScript);
@@ -228,7 +231,6 @@ void CNetGame::LoadAllFilterscripts()
 		} else {
 			logprintf("  Unable to load filter script '%s.amx'.", szFilterScript);
 		}
-		szFilterScript = strtok(NULL, " ");
 	}
 	logprintf("  Loaded %d filter scripts.\n", iScriptCount);
 }
