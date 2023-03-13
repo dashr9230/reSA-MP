@@ -48,6 +48,7 @@ native GetMaxPlayers();
 native LimitGlobalChatRadius(Float:chat_radius);
 native CallRemoteFunction(const function[], const format[], {Float,_}:...);
 native CallLocalFunction(const function[], const format[], {Float,_}:...);
+native Float:VectorSize(Float:x, Float:y, Float:z);
 native Float:asin(Float:value);
 native Float:acos(Float:value);
 native Float:atan(Float:value);
