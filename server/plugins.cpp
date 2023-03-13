@@ -367,7 +367,6 @@ BOOL CPlugins::LoadSinglePlugin(char *szPluginPath)
 void CPlugins::LoadPlugins(char *szSearchPath)
 {
 	char szPath[MAX_PATH];
-	char szFullPath[MAX_PATH];
 	char *szDlerror = NULL;
 	strcpy(szPath, szSearchPath);
 
@@ -382,19 +381,18 @@ void CPlugins::LoadPlugins(char *szSearchPath)
 	logprintf("");
 	logprintf("Server Plugins");
 	logprintf("--------------");
-	int iPluginCount = 0;
-	char* szFilename = strtok(pConsole->GetStringVariable("plugins"), " ");
-	while (szFilename)
+	std::istringstream plugins(pConsole->GetStringVariable("plugins"));
+	std::string plugin;
+	while (std::getline(plugins, plugin, ' '))
 	{
-		logprintf(" Loading plugin: %s", szFilename);
+		logprintf(" Loading plugin: %s", plugin.c_str());
 
-		strcpy(szFullPath, szPath);
-		strcat(szFullPath, szFilename);
+		plugin.insert(0, szPath);
 
-		if (LoadSinglePlugin(szFullPath))
+		if (LoadSinglePlugin((char*)plugin.c_str()))
 		{
-            logprintf("  Loaded.");
-		} 
+			logprintf("  Loaded.");
+		}
 		else 
 		{
 #ifdef LINUX
@@ -407,8 +405,6 @@ void CPlugins::LoadPlugins(char *szSearchPath)
 			logprintf("  Failed.");
 #endif
 		}
-
-		szFilename = strtok(NULL, " ");
 	}
 	logprintf(" Loaded %d plugins.\n", GetPluginCount());
 }
